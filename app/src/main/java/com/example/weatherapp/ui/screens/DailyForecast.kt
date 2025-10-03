@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,16 +36,10 @@ fun DailyForecast(
     ) {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 40.dp),
-            horizontalArrangement = Arrangement.Center
+                .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
         ) {
-            Button(
-                onClick = onBack,
-                modifier = Modifier.size(width = 100.dp, height = 50.dp),
-            ) {
-                Text("Back")
-            }
+
         }
 
         Box(
@@ -55,7 +48,7 @@ fun DailyForecast(
         ) {
             Column(
                 modifier = Modifier
-                    .padding(16.dp)
+                    .padding(8.dp)
                     .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(24.dp)

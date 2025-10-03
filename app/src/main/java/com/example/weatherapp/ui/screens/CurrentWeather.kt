@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -34,16 +33,10 @@ fun CurrentWeather(
     ) {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 40.dp),
-            horizontalArrangement = Arrangement.Center
+                .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
         ) {
-            Button(
-                onClick = onBack,
-                modifier = Modifier.size(width = 100.dp, height = 50.dp),
-            ) {
-                Text("Back")
-            }
+
         }
 
         Box(
@@ -53,7 +46,7 @@ fun CurrentWeather(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(8.dp)
             ) {
                 Text(
                     text = "Today - Sept 26",
