@@ -55,9 +55,8 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DisplayUI(){
-    val navController = rememberNavController()
 
-    // Variable to store selected value for nav bar
+    val navController = rememberNavController()
     var selectedItem by remember { mutableIntStateOf(0) }
 
     Scaffold(

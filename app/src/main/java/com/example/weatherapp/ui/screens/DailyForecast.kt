@@ -16,6 +16,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,20 +26,25 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.weatherapp.R
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.weatherapp.MainViewModel
 
 @Composable
 fun DailyForecast(
     modifier: Modifier = Modifier,
-    onBack: () -> Unit = {}
+    onBack: () -> Unit = {},
+    viewModel: MainViewModel = viewModel()
 ) {
+    val weather by viewModel.weather.collectAsState()
+    val forecastList = weather?.forecast ?: emptyList()
+
     Column(
         modifier = modifier.fillMaxSize()
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
+            horizontalArrangement = Arrangement.Center
         ) {
 
         }
@@ -53,159 +60,95 @@ fun DailyForecast(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
-                // Day 1 - Today
-                DayForecastItem(
-                    date = "Today - Sept 26",
-                    highTemp = "25°C",
-                    lowTemp = "18°C",
-                    condition = "Cloudy",
-                    precipitationType = "Light Rain",
-                    precipitationAmount = "2.5mm",
-                    precipitationProbability = "60%",
-                    windDirection = "Northwest",
-                    windSpeed = "15 km/h",
-                    humidity = "78%",
-                    iconRes = R.drawable.cloudy
-                )
+                forecastList.forEachIndexed { index, forecast ->
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = forecast.date,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(bottom = 16.dp)
+                        )
 
-                HorizontalDivider(
-                    modifier = Modifier.fillMaxWidth(),
-                    thickness = 1.dp,
-                    color = Color.Gray
-                )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            Image(
+                                painter = painterResource(id = forecast.iconRes),
+                                contentDescription = "${forecast.condition} icon",
+                                modifier = Modifier.size(120.dp)
+                            )
 
-                // Day 2 - Tomorrow
-                DayForecastItem(
-                    date = "Tomorrow - Sept 27",
-                    highTemp = "28°C",
-                    lowTemp = "20°C",
-                    condition = "Sunny",
-                    precipitationType = "No Rain",
-                    precipitationAmount = "0mm",
-                    precipitationProbability = "5%",
-                    windDirection = "West",
-                    windSpeed = "12 km/h",
-                    humidity = "65%",
-                    iconRes = R.drawable.cloudy
-                )
+                            Column(
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Text(
+                                    text = "High: ${forecast.highTemp}  Low: ${forecast.lowTemp}",
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Medium
+                                )
 
-                HorizontalDivider(
-                    modifier = Modifier.fillMaxWidth(),
-                    thickness = 1.dp,
-                    color = Color.Gray
-                )
+                                Text(
+                                    text = "Precipitation: ${forecast.precipitationType}",
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Medium
+                                )
 
-                // Day 3
-                DayForecastItem(
-                    date = "Sept 28",
-                    highTemp = "24°C",
-                    lowTemp = "16°C",
-                    condition = "Partly Cloudy",
-                    precipitationType = "Showers",
-                    precipitationAmount = "5.2mm",
-                    precipitationProbability = "40%",
-                    windDirection = "East",
-                    windSpeed = "18 km/h",
-                    humidity = "82%",
-                    iconRes = R.drawable.cloudy
-                )
+                                Text(
+                                    text = "Amount: ${forecast.precipitationAmount}",
+                                    fontSize = 14.sp,
+                                    color = Color.Gray
+                                )
+
+                                Text(
+                                    text = "Probability: ${forecast.precipitationProbability}",
+                                    fontSize = 14.sp,
+                                    color = Color.Gray
+                                )
+
+                                Text(
+                                    text = "Wind: ${forecast.windDirection}",
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Medium
+                                )
+
+                                Text(
+                                    text = "Speed: ${forecast.windSpeed}",
+                                    fontSize = 14.sp,
+                                    color = Color.Gray
+                                )
+
+                                Text(
+                                    text = "Humidity: ${forecast.humidity}",
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(24.dp))
+
+                        Text(
+                            text = "Condition: ${forecast.condition}",
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+
+                    if (index < forecastList.size - 1) {
+                        HorizontalDivider(
+                            modifier = Modifier.fillMaxWidth(),
+                            thickness = 1.dp,
+                            color = Color.Gray
+                        )
+                    }
+                }
             }
         }
-    }
-}
-
-@Composable
-fun DayForecastItem(
-    date: String,
-    highTemp: String,
-    lowTemp: String,
-    condition: String,
-    precipitationType: String,
-    precipitationAmount: String,
-    precipitationProbability: String,
-    windDirection: String,
-    windSpeed: String,
-    humidity: String,
-    iconRes: Int,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = modifier
-    ) {
-        Text(
-            text = date,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Image(
-                painter = painterResource(id = iconRes),
-                contentDescription = "$condition icon",
-                modifier = Modifier.size(120.dp)
-            )
-
-            Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Text(
-                    text = "High: $highTemp  Low: $lowTemp",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium
-                )
-
-                Text(
-                    text = "Precipitation: $precipitationType",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium
-                )
-
-                Text(
-                    text = "Amount: $precipitationAmount",
-                    fontSize = 14.sp,
-                    color = Color.Gray
-                )
-
-                Text(
-                    text = "Probability: $precipitationProbability",
-                    fontSize = 14.sp,
-                    color = Color.Gray
-                )
-
-                Text(
-                    text = "Wind: $windDirection",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium
-                )
-
-                Text(
-                    text = "Speed: $windSpeed",
-                    fontSize = 14.sp,
-                    color = Color.Gray
-                )
-
-                Text(
-                    text = "Humidity: $humidity",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Text(
-            text = "Condition: $condition",
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center
-        )
     }
 }
