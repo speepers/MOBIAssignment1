@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,23 +39,26 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 
 class MainActivity : ComponentActivity() {
+    private val mainViewModel: MainViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            DisplayUI()
+            DisplayUI(mainViewModel)
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DisplayUI(){
+fun DisplayUI(mainViewModel: MainViewModel) {
 
     val navController = rememberNavController()
     var selectedItem by remember { mutableIntStateOf(0) }
@@ -96,23 +100,6 @@ fun DisplayUI(){
 
                 NavigationBarItem(
                     label = {
-                        Text("Home")
-                    },
-                    icon = {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_action_home),
-                            contentDescription = "Home Icon"
-                        )
-                    },
-                    selected = selectedItem == 1,
-                    onClick = {
-                        selectedItem = 1
-                        navController.navigate(route = "AppContent")
-                    }
-                )
-
-                NavigationBarItem(
-                    label = {
                         Text("Daily Forecast")
                     },
                     icon = {
@@ -129,72 +116,20 @@ fun DisplayUI(){
                 )
             }
         }
-    ){ innerPadding ->
+    ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = "AppContent",
+            startDestination = "CurrentWeather",
             modifier = Modifier.padding(innerPadding)
-        ){
+        ) {
             composable(route = "CurrentWeather") {
-                CurrentWeather()
+                CurrentWeather(mainViewModel)
             }
 
-            composable(route = "DailyForecast"){
-                DailyForecast()
+            composable(route = "DailyForecast") {
+                DailyForecast(mainViewModel)
             }
 
-            composable(route = "AppContent") {
-                AppContent()
-            }
-        }
-    }
-}
-
-@Composable
-fun AppContent() {
-    var showWeather by rememberSaveable { mutableStateOf(false) }
-    var showDailyWeather by rememberSaveable { mutableStateOf(false) }
-
-    when {
-        showWeather -> CurrentWeather(onBack = { showWeather = false })
-        showDailyWeather -> DailyForecast(onBack = { showDailyWeather = false })
-        else -> {
-            Box(modifier = Modifier.fillMaxSize()) {
-
-                Text(
-                    text = "The Weather Channel",
-                    modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .padding(top = 50.dp),
-                        style = TextStyle(fontSize = 40.sp),
-                        fontStyle = FontStyle.Italic,
-                    textAlign = TextAlign.Center
-                )
-
-                Column(){
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        Column(
-                            modifier = Modifier
-                                .align(Alignment.TopCenter)    // place the whole column where you want in the Box
-                                .padding(top = 230.dp),        // move both image+text down together
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.cloudy),
-                                contentDescription = "Cloudy icon",
-                                modifier = Modifier.size(120.dp)
-                            )
-
-                            Spacer(modifier = Modifier.height(16.dp)) // space between image and text
-
-                            Text(
-                                text = "Currently 18\u00B0C",
-                                style = TextStyle(fontSize = 30.sp)
-                            )
-                        }
-                    }
-                }
-            }
         }
     }
 }

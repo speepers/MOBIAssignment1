@@ -1,18 +1,44 @@
 package com.example.weatherapp
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.weatherapp.models.Current
 import com.example.weatherapp.models.Forecast
 import com.example.weatherapp.models.Weather
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class MainViewModel : ViewModel() {
-
     private val _weather = MutableStateFlow<Weather?>(null)
     val weather = _weather.asStateFlow()
 
+    // you need to create a variable to store the pokemon data into
+    // private var pokemon by mutableStateOf<Pokemon?>(null)
+
+    // retrofit instance
+    // val retrofit: Retrofit = Retrofit.Builder()
+    //    .baseUrl("https://pokeapi.co/api/v2/")
+    //    .addConverterFactory(GsonConverterFactory.create())
+    //    .build()
+
+    // initalize the interface service
+    // val pokemonService: PokemonService = retrofit.create(PokemonService::class.java)
+
+
     init {
+
+        // viewModelScope.launch {
+        //     fetch the pokemon from the api
+        //     val pokemonFromAPI = pokemonService.getPokemon()
+        //     _pokemon.value = pokemonFromAPI
+        // }
+
         val weatherData = Weather(
             current = Current(
                 date = "Today - Sept 26",
@@ -69,7 +95,6 @@ class MainViewModel : ViewModel() {
                 )
             )
         )
-
         _weather.value = weatherData
     }
 }

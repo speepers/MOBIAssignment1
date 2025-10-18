@@ -31,9 +31,8 @@ import com.example.weatherapp.MainViewModel
 
 @Composable
 fun DailyForecast(
+    viewModel: MainViewModel,
     modifier: Modifier = Modifier,
-    onBack: () -> Unit = {},
-    viewModel: MainViewModel = viewModel()
 ) {
     val weather by viewModel.weather.collectAsState()
     val forecastList = weather?.forecast ?: emptyList()
@@ -66,7 +65,7 @@ fun DailyForecast(
                         verticalArrangement = Arrangement.Center
                     ) {
                         Text(
-                            text = forecast.date,
+                            text = forecast.lastUpdated,
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center,
@@ -87,37 +86,25 @@ fun DailyForecast(
                                 verticalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
                                 Text(
-                                    text = "High: ${forecast.highTemp}  Low: ${forecast.lowTemp}",
+                                    text = "Current Temp: ${forecast.currentTemp}°C  Feels Like: ${forecast.feelsLike}°C",
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.Medium
                                 )
 
                                 Text(
-                                    text = "Precipitation: ${forecast.precipitationType}",
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Medium
-                                )
-
-                                Text(
-                                    text = "Amount: ${forecast.precipitationAmount}",
+                                    text = "Precipitation Amount: ${forecast.precipAmt}mm",
                                     fontSize = 14.sp,
                                     color = Color.Gray
                                 )
 
                                 Text(
-                                    text = "Probability: ${forecast.precipitationProbability}",
-                                    fontSize = 14.sp,
-                                    color = Color.Gray
-                                )
-
-                                Text(
-                                    text = "Wind: ${forecast.windDirection}",
+                                    text = "Wind Direction: ${forecast.windDirection}",
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.Medium
                                 )
 
                                 Text(
-                                    text = "Speed: ${forecast.windSpeed}",
+                                    text = "Wind Speed: ${forecast.windSpeed}kp/h",
                                     fontSize = 14.sp,
                                     color = Color.Gray
                                 )
@@ -133,7 +120,7 @@ fun DailyForecast(
                         Spacer(modifier = Modifier.height(24.dp))
 
                         Text(
-                            text = "Condition: ${forecast.condition}",
+                            text = "Condition: ${forecast.condition.text}",
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center

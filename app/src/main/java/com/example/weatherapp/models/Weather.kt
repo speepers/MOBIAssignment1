@@ -1,34 +1,38 @@
 package com.example.weatherapp.models
 
+import com.google.gson.annotations.SerializedName
+
 data class Weather(
     val current: Current,
     val forecast: List<Forecast>
 )
 
 data class Current(
-    val date: String,
-    val highTemp: String,
-    val lowTemp: String,
-    val condition: String,
-    val precipitationType: String,
-    val precipitationAmount: String,
-    val precipitationProbability: String,
-    val windDirection: String,
-    val windSpeed: String,
-    val humidity: String,
+    @SerializedName("last_updated") val lastUpdated: String,
+    @SerializedName("temp_c") val currentTemp: Double,
+    @SerializedName("feelslike_c") val feelsLike: Double,
+    @SerializedName("precip_mm") val precipAmt: Double,
+    @SerializedName("wind_dir") val windDirection: String,
+    @SerializedName("wind_kph") val windSpeed: Double,
+    val condition: Condition,
+    val humidity: Int,
     val iconRes: Int
 )
 
 data class Forecast(
-    val date: String,
-    val highTemp: String,
-    val lowTemp: String,
-    val condition: String,
-    val precipitationType: String,
-    val precipitationAmount: String,
-    val precipitationProbability: String,
-    val windDirection: String,
-    val windSpeed: String,
-    val humidity: String,
+    @SerializedName("last_updated") val lastUpdated: String,
+    @SerializedName("temp_c") val currentTemp: Double,
+    @SerializedName("feelslike_c") val feelsLike: Double,
+    @SerializedName("precip_mm") val precipAmt: Double,
+    @SerializedName("wind_dir") val windDirection: String,
+    @SerializedName("wind_kph") val windSpeed: Double,
+    val condition: Condition,
+    val humidity: Int,
     val iconRes: Int
+)
+
+data class Condition(
+    val text: String,
+    val icon: String,
+    val code: Int
 )

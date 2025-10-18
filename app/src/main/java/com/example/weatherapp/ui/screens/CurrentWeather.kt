@@ -25,12 +25,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weatherapp.MainViewModel
+import com.example.weatherapp.models.Current
 
 @Composable
 fun CurrentWeather(
+    viewModel: MainViewModel,
     modifier: Modifier = Modifier,
-    onBack: () -> Unit = {},
-    viewModel: MainViewModel = viewModel()
 ) {
     val weather by viewModel.weather.collectAsState()
     val current = weather?.current
@@ -45,7 +45,7 @@ fun CurrentWeather(
         ) {
 
         }
-
+        
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
@@ -57,7 +57,7 @@ fun CurrentWeather(
                     modifier = Modifier.padding(8.dp)
                 ) {
                     Text(
-                        text = currentWeather.date,
+                        text = currentWeather.lastUpdated,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center,
@@ -78,37 +78,25 @@ fun CurrentWeather(
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             Text(
-                                text = "High: ${currentWeather.highTemp}  Low: ${currentWeather.lowTemp}",
+                                text = "Current Temp: ${currentWeather.currentTemp}°C  Feels Like: ${currentWeather.feelsLike}°C",
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Medium
                             )
 
                             Text(
-                                text = "Precipitation: ${currentWeather.precipitationType}",
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Medium
-                            )
-
-                            Text(
-                                text = "Amount: ${currentWeather.precipitationAmount}",
+                                text = "Precipitation Amount: ${currentWeather.precipAmt}mm",
                                 fontSize = 14.sp,
                                 color = Color.Gray
                             )
 
                             Text(
-                                text = "Probability: ${currentWeather.precipitationProbability}",
-                                fontSize = 14.sp,
-                                color = Color.Gray
-                            )
-
-                            Text(
-                                text = "Wind: ${currentWeather.windDirection}",
+                                text = "Wind Direction: ${currentWeather.windDirection}",
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Medium
                             )
 
                             Text(
-                                text = "Speed: ${currentWeather.windSpeed}",
+                                text = "Wind Speed: ${currentWeather.windSpeed}kp/h",
                                 fontSize = 14.sp,
                                 color = Color.Gray
                             )
@@ -124,7 +112,7 @@ fun CurrentWeather(
                     Spacer(modifier = Modifier.height(24.dp))
 
                     Text(
-                        text = "Condition: ${currentWeather.condition}",
+                        text = "Condition: ${currentWeather.condition.text}",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center
