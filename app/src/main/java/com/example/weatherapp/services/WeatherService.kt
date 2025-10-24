@@ -1,23 +1,16 @@
-package com.example.weatherapp.services
+package com.example.weatherapp.network
 
-import retrofit2.http.GET
 import com.example.weatherapp.models.Weather
-import retrofit2.http.Path
+import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface WeatherService {
+    @GET("v1/forecast.json")
+    suspend fun getWeather(
+        @Query("key") apiKey: String,
+        @Query("q") location: String,
+        @Query("days") days: Int,
+        @Query("aqi") aqi: String = "no",
+        @Query("alerts") alerts: String = "no"
+    ): Weather
 }
-
-//interface PokemonService {
-//
-//    @GET("pokemon/{name}")
-//    suspend fun getPokemon(
-//        @Path("name") name: String
-//    ): Pokemon
-//
-//    @GET("pokemon")
-//    suspend fun getAllPokemon(
-//        @Query("limit") limit: Int,
-//        @Query("offset") offset: Int
-//    ): List<Pokemon>
-//}

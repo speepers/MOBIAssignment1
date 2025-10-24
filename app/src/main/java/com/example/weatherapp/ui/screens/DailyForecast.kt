@@ -27,6 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.example.weatherapp.MainViewModel
 
 @Composable
@@ -35,7 +36,7 @@ fun DailyForecast(
     modifier: Modifier = Modifier,
 ) {
     val weather by viewModel.weather.collectAsState()
-    val forecastList = weather?.forecast ?: emptyList()
+    val forecastList = weather?.forecast?.forecastday ?: emptyList()
 
     Column(
         modifier = modifier.fillMaxSize()
@@ -59,13 +60,13 @@ fun DailyForecast(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
-                forecastList.forEachIndexed { index, forecast ->
+                forecastList.forEachIndexed { index, forecastDay ->
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
                         Text(
-                            text = forecast.lastUpdated,
+                            text = forecastDay.date,
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center,
@@ -76,9 +77,9 @@ fun DailyForecast(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
-                            Image(
-                                painter = painterResource(id = forecast.iconRes),
-                                contentDescription = "${forecast.condition} icon",
+                            AsyncImage(
+                                model = "https:${forecastDay.day.condition.icon}",
+                                contentDescription = "${forecastDay.day.condition.text} icon",
                                 modifier = Modifier.size(120.dp)
                             )
 
@@ -86,31 +87,31 @@ fun DailyForecast(
                                 verticalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
                                 Text(
-                                    text = "Current Temp: ${forecast.currentTemp}°C  Feels Like: ${forecast.feelsLike}°C",
+                                    text = "High: ${forecastDay.day.maxtempC}°C  Low: ${forecastDay.day.mintempC}°C",
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.Medium
                                 )
 
                                 Text(
-                                    text = "Precipitation Amount: ${forecast.precipAmt}mm",
+                                    text = "Precipitation Amount: ${forecastDay.day.totalprecipMm}mm",
                                     fontSize = 14.sp,
                                     color = Color.Gray
                                 )
 
                                 Text(
-                                    text = "Wind Direction: ${forecast.windDirection}",
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Medium
-                                )
-
-                                Text(
-                                    text = "Wind Speed: ${forecast.windSpeed}kp/h",
+                                    text = "Precipitation Probability: ${forecastDay.day.dailyChanceOfRain}%",
                                     fontSize = 14.sp,
                                     color = Color.Gray
                                 )
 
                                 Text(
-                                    text = "Humidity: ${forecast.humidity}",
+                                    text = "Wind Speed: ${forecastDay.day.maxwindKph}kp/h",
+                                    fontSize = 14.sp,
+                                    color = Color.Gray
+                                )
+
+                                Text(
+                                    text = "Humidity: ${forecastDay.day.avghumidity}%",
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.Medium
                                 )
@@ -120,7 +121,7 @@ fun DailyForecast(
                         Spacer(modifier = Modifier.height(24.dp))
 
                         Text(
-                            text = "Condition: ${forecast.condition.text}",
+                            text = "Condition: ${forecastDay.day.condition.text}",
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center

@@ -24,6 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.example.weatherapp.MainViewModel
 import com.example.weatherapp.models.Current
 
@@ -34,6 +35,7 @@ fun CurrentWeather(
 ) {
     val weather by viewModel.weather.collectAsState()
     val current = weather?.current
+    val location = weather?.location
 
     Column(
         modifier = modifier.fillMaxSize()
@@ -45,7 +47,7 @@ fun CurrentWeather(
         ) {
 
         }
-        
+
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
@@ -57,7 +59,7 @@ fun CurrentWeather(
                     modifier = Modifier.padding(8.dp)
                 ) {
                     Text(
-                        text = currentWeather.lastUpdated,
+                        text = location?.name ?: "Current Weather",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center,
@@ -68,9 +70,9 @@ fun CurrentWeather(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        Image(
-                            painter = painterResource(id = currentWeather.iconRes),
-                            contentDescription = "Cloudy icon",
+                        AsyncImage(
+                            model = "https:${currentWeather.condition.icon}",
+                            contentDescription = "Weather icon",
                             modifier = Modifier.size(120.dp)
                         )
 
@@ -78,33 +80,27 @@ fun CurrentWeather(
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             Text(
-                                text = "Current Temp: ${currentWeather.currentTemp}°C  Feels Like: ${currentWeather.feelsLike}°C",
+                                text = "Current Temp: ${currentWeather.tempC}°C",
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Medium
                             )
 
                             Text(
-                                text = "Precipitation Amount: ${currentWeather.precipAmt}mm",
+                                text = "Precipitation Amount: ${currentWeather.precipMm}mm",
                                 fontSize = 14.sp,
                                 color = Color.Gray
                             )
 
                             Text(
-                                text = "Wind Direction: ${currentWeather.windDirection}",
+                                text = "Wind Direction: ${currentWeather.windDir}",
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Medium
                             )
 
                             Text(
-                                text = "Wind Speed: ${currentWeather.windSpeed}kp/h",
+                                text = "Wind Speed: ${currentWeather.windKph}kp/h",
                                 fontSize = 14.sp,
                                 color = Color.Gray
-                            )
-
-                            Text(
-                                text = "Humidity: ${currentWeather.humidity}",
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Medium
                             )
                         }
                     }
