@@ -1,6 +1,9 @@
 package com.example.weatherapp
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -25,12 +28,15 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.weatherapp.ui.screens.CurrentWeather
 import com.example.weatherapp.ui.screens.DailyForecast
@@ -39,10 +45,17 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+import com.google.android.gms.tasks.CancellationTokenSource
 
 class MainActivity : ComponentActivity() {
     private val mainViewModel: MainViewModel by viewModels()
@@ -51,7 +64,46 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            GetLocation()
             DisplayUI(mainViewModel)
+        }
+    }
+
+    @OptIn(ExperimentalPermissionsApi::class, ExperimentalPermissionsApi::class)
+    @Composable
+    fun GetLocation() {
+
+        val permissionState = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
+
+        if (permissionState.status.isGranted) {
+
+            val currentContext = LocalContext.current
+            val fusedLocationClient = LocationServices.getFusedLocationProviderClient(currentContext)
+
+            if (ContextCompat.checkSelfPermission(
+                    currentContext,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED) {
+                val cancellationTokenSource = CancellationTokenSource()
+
+                fusedLocationClient.getCurrentLocation(
+                    Priority.PRIORITY_HIGH_ACCURACY,
+                    cancellationTokenSource.token)
+                    .addOnSuccessListener { location ->
+                        if (location != null) {
+                            val lat = location.latitude.toString()
+                            val lng = location.longitude.toString()
+                            val coordinates = "$lat,$lng"
+
+                            mainViewModel.fetchWeather(coordinates)
+                        }
+                    }
+            }
+        }
+        else {
+            LaunchedEffect(permissionState){
+                permissionState.launchPermissionRequest()
+            }
         }
     }
 }
@@ -62,6 +114,8 @@ fun DisplayUI(mainViewModel: MainViewModel) {
 
     val navController = rememberNavController()
     var selectedItem by remember { mutableIntStateOf(0) }
+    val weather by mainViewModel.weather.collectAsState()
+    val locationText = weather?.location?.let { "${it.name}, ${it.region}" } ?: "Loading..."
 
     Scaffold(
         topBar = {
@@ -71,7 +125,7 @@ fun DisplayUI(mainViewModel: MainViewModel) {
                     titleContentColor = MaterialTheme.colorScheme.primary
                 ),
                 title = {
-                    Text("Halifax, Nova Scotia")
+                    Text(locationText)
                 }
 
             )

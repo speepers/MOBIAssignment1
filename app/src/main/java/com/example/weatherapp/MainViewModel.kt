@@ -21,10 +21,6 @@ class MainViewModel : ViewModel() {
     val weatherService: WeatherService = retrofit.create(WeatherService::class.java)
     private val apiKey = "da4116e66fb849b29f9123157251710"
 
-    init {
-        fetchWeather("Halifax")
-    }
-
     fun fetchWeather(location: String, days: Int = 3) {
         viewModelScope.launch {
             val weatherFromAPI = weatherService.getWeather(

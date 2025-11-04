@@ -28,7 +28,8 @@ data class Forecast(
 
 data class ForecastDay(
     val date: String,
-    val day: Day
+    val day: Day,
+    val hour: List<Hour>
 )
 
 data class Day(
@@ -38,7 +39,7 @@ data class Day(
     @SerializedName("daily_chance_of_rain") val dailyChanceOfRain: Int,
     @SerializedName("daily_chance_of_snow") val dailyChanceOfSnow: Int,
     @SerializedName("maxwind_kph") val maxwindKph: Double,
-    val avghumidity: Int,
+    @SerializedName("avghumidity") val avghumidity: Int,
     val condition: Condition
 )
 
@@ -46,4 +47,10 @@ data class Condition(
     val text: String,
     val icon: String,
     val code: Int
+)
+
+data class Hour(
+    val time: String,
+    @SerializedName("temp_c") val tempC: Double,
+    val condition: Condition
 )
